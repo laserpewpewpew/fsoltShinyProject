@@ -9,4 +9,4 @@ library(shiny)
 library(car)
 library(ggplot2) 
 
-runApp("C:\Users\kellengracey\Documents\GitHub\fsoltShinyProject")
+runApp("my_app")
