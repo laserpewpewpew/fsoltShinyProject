@@ -1,7 +1,7 @@
 library(ggplot2)
+library(foreign)
 
-swiid <- read.csv("SWIIDv4_1summary.csv", as.is=T)
-
+swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
 
 s4 <- swiid[swiid$country=="United States" | swiid$country=="United Kingdom" | swiid$country=="Sweden" | swiid$country=="Germany",]
 
