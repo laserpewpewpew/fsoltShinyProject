@@ -722,8 +722,7 @@ shinyUI(fluidPage(
                  br(),
                  helpText("Choose a Range of Dates:"),
                  sliderInput("dates", label="Dates",
-                             min = 1960, max = 2012, value = c(1975, 2000), format = "####"),
-                 submitButton("Submit")
+                             min = 1960, max = 2012, value = c(1975, 2000), format = "####")
       ),
     mainPanel(
       plotOutput("plot"))
