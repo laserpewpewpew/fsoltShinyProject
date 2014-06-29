@@ -19,23 +19,22 @@ shinyUI(fluidPage(
                  helpText("Choose up to 4 Countries:"),
                  selectInput("country1", label="Country 1",
                              choices = swiid$country,
-                             selected = sample(swiid$country,1)),
+                             selected = "Canada"),
                  selectInput("country2", label="Country 2",
                              choices = swiid$country,
-                             selected = sample(swiid$country,1)),
+                             selected = "United States"),
                  selectInput("country3", label="Country 3",
                              choices = swiid$country,
-                             selected = sample(swiid$country,1)),
+                             selected = "United Kingdom"),
                  selectInput("country4", label="Country 4",
                              choices = swiid$country,
-                             selected = sample(swiid$country,1)),
-                 
+                             selected = "Germany"),
                  
                  
                  br(),
                  helpText("Choose a Range of Dates:"),
                  sliderInput("dates", label="Dates",
-                             min = min(swiid$year), max = max(swiid$year), value = c(1975, max(swiid$year)), format = "####")
+                             min = min(swiid$year, na.rm=T), max = max(swiid$year, na.rm=T), value = c(1975, max(swiid$year, na.rm=T)), format = "####")
       ),
     mainPanel(
       plotOutput("plot"))

@@ -2,24 +2,25 @@ library(shiny)
 library(foreign)
 library(car)
 library(ggplot2)
-
 swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
 
 shinyServer(function(input, output) {
+
+  
   
   output$plot <- renderPlot({
     
     country1 <- switch(input$country1,
-                       swiid$country)
-            
+                       "Canada"="Canada")
+    
     country2 <- switch(input$country2,
-                       swiid$country)
+                       "United States"="United States")
     
     country3 <- switch(input$country3,
-                       swiid$country)
+                       "United Kingdom"="United Kingdom")
     
     country4 <- switch(input$country4,
-                       swiid$country)
+                       "Germany"="Germany")
     
     series <- switch(input$series,
                      "gini_net" = "gini_net",
