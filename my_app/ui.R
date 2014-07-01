@@ -6,7 +6,7 @@ shinyUI(fluidPage(
   titlePanel("Graphing SWIID"),
   
   sidebarLayout(position = "right",
-    sidebarPanel(
+      sidebarPanel(          
       selectInput("compare", label="Comparison:",
                   choices=list("Within One Country" ="Within One Country",
                                "Across Multiple Countries"="Across Multiple Countries",
@@ -14,7 +14,7 @@ shinyUI(fluidPage(
                   selected = "Not Selected"),
       
       conditionalPanel(
-        condition = "input$compare == Within One Country",
+        condition = "input.compare == 'Within One Country'",
         checkboxGroupInput("ys", "Choose Series:",
                            choices=list("Net Inequality" = "gini_net",
                                         "Market Inequality" = "gini_market",
@@ -33,7 +33,7 @@ shinyUI(fluidPage(
       ),
       
       conditionalPanel(
-        condition = "input$compare == Across Multiple Countries",
+        condition = "input.compare == 'Across Multiple Countries'",
         selectInput("series", label="Series",
                     choices = list("Net Inequality" = "gini_net",
                                    "Market Inequality" = "gini_market",
@@ -63,9 +63,15 @@ shinyUI(fluidPage(
         helpText("Choose a Range of Dates:"),
         sliderInput("dates", label="Dates",
                     min = min(swiid$year, na.rm=T), max = max(swiid$year, na.rm=T), value = c(1975, max(swiid$year, na.rm=T)), format = "####")
+        ),
+      
+      conditionalPanel(
+        condition = "input.compare == 'Not Selected'",
+        helpText("Please select a comparison above.")
         )
-    ),
+      ),
+      
       mainPanel(
       plotOutput("plot"))
-    )
+  )
 ))
