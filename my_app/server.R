@@ -4,9 +4,10 @@ library(car)
 library(ggplot2)
 library(gridExtra)
 swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
+compare_options <- c("within one country","across multiple countries","not selected")
+
 
 shinyServer(function(input, output) {
-
   
   output$plot <- renderPlot({
     
