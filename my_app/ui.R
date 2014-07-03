@@ -15,12 +15,15 @@ shinyUI(fluidPage(
       
       conditionalPanel(
         condition = "input.compare == 'Within One Country'",
-        checkboxGroupInput("ys", "Choose Series:",
-                           choices=list("Net Inequality" = "gini_net",
-                                        "Market Inequality" = "gini_market",
-                                        "Relative Redistribution" = "rel_red",
-                                        "Absolute Redistribution" = "abs_red"),
-                           selected="gini_net"),
+        checkboxInput("net", "Net Inequality",
+                      value = TRUE),
+        checkboxInput("market", "Market Inequality",
+                      value = FALSE),
+        checkboxInput("relative", "Relative Redistribution",
+                      value = FALSE),
+        checkboxInput("absolute", "Absolute Redistribution",
+                      value = FALSE),
+
         selectInput("country", "Choose Country:",
                     choices=swiid$country,
                     selected=sample(1:170,1)),
@@ -45,19 +48,19 @@ shinyUI(fluidPage(
         helpText("Choose up to 4 Countries:"),
         selectInput("country1", label="Country 1",
                     choices = swiid$country,
-                    selected = sample(1:170,1)),
+                    selected = 28),
         
         selectInput("country2", label="Country 2",
                     choices = swiid$country,
-                    selected = sample(1:170,1)),
+                    selected = "Not Selected"),
         
         selectInput("country3", label="Country 3",
                     choices = swiid$country,
-                    selected = sample(1:170,1)),
+                    selected = "Not Selected"),
         
         selectInput("country4", label="Country 4",
                     choices = swiid$country,
-                    selected = sample(1:170,1)),
+                    selected = "Not Selected"),
         
         br(),
         helpText("Choose a Range of Dates:"),
@@ -72,6 +75,15 @@ shinyUI(fluidPage(
       ),
       
       mainPanel(
-      plotOutput("plot"))
-  )
-))
+        conditionalPanel(
+          condition = "input.compare == 'Within One Country'",
+          plotOutput("plot1"),
+          plotOutput("plot2"),
+          plotOutput("plot3"),
+          plotOutput("plot4")),
+        conditionalPanel(
+          condition = "input.compare == 'Across Multiple Countries'",
+          plotOutput("plot")
+        )
+        )
+)))
