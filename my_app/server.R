@@ -14,7 +14,8 @@ ch2 <- list("Net Inequality" = "gini_net",
 ch1 <- list("Net Inequality" = "gini_net")
 
 swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
-
+swiid <- ddply(swiid, .(country), mutate, obs = length(gini_net))
+swiid <- swiid[swiid$obs>1, ]
 cc <- ddply(swiid, .(country), summarize, ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch2" ))
 
 shinyServer(function(input, output, session) {
