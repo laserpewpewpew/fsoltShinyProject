@@ -5,23 +5,22 @@ library(plyr)
 library(gridExtra)
 library(ggthemes)
 
-swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
 ch4 <- list("Net Inequality" = "gini_net",
             "Market Inequality" = "gini_market",
             "Relative Redistribution" = "rel_red",
             "Absolute Redistribution" = "abs_red")
 ch2 <- list("Net Inequality" = "gini_net",
             "Market Inequality" = "gini_market")
+ch1 <- list("Net Inequality" = "gini_net")
+
+swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
+
 cc <- ddply(swiid, .(country), summarize, ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch2" ))
 
-shinyServer(function(input, output, session) { 
-  
-#   updateSliderInput(session, "years", label="Select Years:",
-#                             min = min(swiid$year, na.rm=T), max = max(swiid$year, na.rm=T), 
-#                             value = c(1975, max(swiid$year, na.rm=T)), format = "####")
+shinyServer(function(input, output, session) {
   
   observe({
-    updateSelectInput(session, "country1", choices = c("select a country", cc$country), selected = "select a country")
+    updateSelectInput(session, "country1", choices = cc$country, selected = "United States")
   })
   observe({
     updateSelectInput(session, "country2", choices = c("select a country", cc$country), selected = "select a country")
@@ -34,9 +33,7 @@ shinyServer(function(input, output, session) {
   })
   
   observe({
-    if(input$country1 != "select a country") {
       cc1 = cc[cc==input$country1, "ch"]
-    } else cc1 <- "ch2"
     updateSelectInput(session, "series1", choices = get(cc1), selected="gini_net" )    
   })
   
@@ -44,7 +41,7 @@ shinyServer(function(input, output, session) {
   observe({
     if(input$country2 != "select a country") {
       cc2 = cc[cc==input$country2, "ch"]
-    } else cc2 <- "ch2"
+    } else cc2 <- "ch1"
     updateSelectInput(session, "series2", choices = get(cc2), selected="gini_net" )    
   })
   
@@ -52,14 +49,14 @@ shinyServer(function(input, output, session) {
   observe({
     if(input$country3 != "select a country") {
       cc3 = cc[cc==input$country3, "ch"]
-    } else cc3 <- "ch2"
+    } else cc3 <- "ch1"
     updateSelectInput(session, "series3", choices = get(cc3), selected="gini_net" )    
   })
   
   observe({
     if(input$country4 != "select a country") {
       cc4 = cc[cc==input$country4, "ch"]
-    } else cc4 <- "ch2"
+    } else cc4 <- "ch1"
     updateSelectInput(session, "series4", choices = get(cc4), selected="gini_net" )    
   })
   
