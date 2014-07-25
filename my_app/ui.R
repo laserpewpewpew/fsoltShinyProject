@@ -51,7 +51,14 @@ shinyUI(fluidPage(
            ),
            
            br(),
-           checkboxInput("bw", "Black and White Background", FALSE)
+           selectInput("theme", "Theme", 
+                       choices = list("Basic" = "none",
+                                      "BW" = "bw",
+                                      "Economist" = "econ",
+                                      "Solarized" = "sol",
+                                      "Solarized 2" = "sol2",
+                                      "Stata" = "stata"),
+                                      selected = "none")
     ),
     
     column(8,
