@@ -100,7 +100,7 @@ shinyServer(function(input, output, session) {
       if (length(table(s1$variable))>1 & length(table(s1$country))>1) {
         s1$series <- paste(s1$country, s1$variable, sep=", ")
       }
-      if (input$theme=="bw") {
+      if (input$theme=="light") {
         print(arrangeGrob(
           ggplot(s1, aes(x=year, y=value, colour=series)) + 
             geom_line() +
@@ -109,7 +109,7 @@ shinyServer(function(input, output, session) {
             coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
             labs(x = "Year", y = ylabel) + 
             scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title) +
-            theme_bw(),
+            theme_light(),
           sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
                        gp=gpar(fontsize=10))) 
         )     

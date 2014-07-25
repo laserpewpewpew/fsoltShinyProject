@@ -52,11 +52,10 @@ shinyUI(fluidPage(
            
            br(),
            selectInput("theme", "Theme", 
-                       choices = list("ggplot" = "none",
-                                      "BW" = "bw",
+                       choices = list("ggplot2" = "none",
+                                      "Light" = "light",
                                       "Economist" = "econ",
                                       "Solarized" = "sol",
-                                      "Solarized 2" = "sol2",
                                       "Stata" = "stata",
                                       "Tufte" = "tufte"),
                                       selected = "none")
