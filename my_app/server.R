@@ -59,138 +59,112 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "series4", choices = get(cc4), selected="gini_net" )    
   })
   
-  output$plot <- renderPlot({   
-      s1 <- data.frame(swiid[swiid$country==input$country1, 
-                             c("country", "year", input$series1, paste0(input$series1, "_se"))])
+  plotInput <- reactive({
+    # Get data for selected countries and series
+    s1 <- data.frame(swiid[swiid$country==input$country1, 
+                           c("country", "year", input$series1, paste0(input$series1, "_se"))])
+    
+    if(input$country2 != "select a country"){
+      s2 <- data.frame(swiid[swiid$country==input$country2, 
+                             c("country", "year", input$series2, paste0(input$series2, "_se"))])
+      s1 <- merge(s1, s2, all=T)
       
-      if(input$country2 != "select a country"){
-        s2 <- data.frame(swiid[swiid$country==input$country2, 
-                               c("country", "year", input$series2, paste0(input$series2, "_se"))])
+      if(input$country3 != "select a country"){
+        s2 <- data.frame(swiid[swiid$country==input$country3, 
+                               c("country", "year", input$series3, paste0(input$series3, "_se"))])
         s1 <- merge(s1, s2, all=T)
-        
-        if(input$country3 != "select a country"){
-          s2 <- data.frame(swiid[swiid$country==input$country3, 
-                                 c("country", "year", input$series3, paste0(input$series3, "_se"))])
+        if(input$country4 != "select a country"){
+          s2 <- data.frame(swiid[swiid$country==input$country4, 
+                                 c("country", "year", input$series4, paste0(input$series4, "_se"))])
           s1 <- merge(s1, s2, all=T)
-          if(input$country4 != "select a country"){
-            s2 <- data.frame(swiid[swiid$country==input$country4, 
-                                   c("country", "year", input$series4, paste0(input$series4, "_se"))])
-            s1 <- merge(s1, s2, all=T)
-          }   
-        } 
-      }
-      
-      s1 <- melt(s1, id.vars=c("country", "year"), na.rm=T)
-      s2 <- s1[grepl("\\_se", s1$variable), c("country", "year", "value")]
-      s1 <- s1[!grepl("\\_se", s1$variable), ]
-      s1 <- cbind(s1, s2[, 3])
-      names(s1)[5] <- "value_se"
-      s1$variable <- gsub("gini_net", "Gini Index, Net Income", s1$variable)
-      s1$variable <- gsub("gini_market", "Gini Index, Market Income", s1$variable)
-      s1$variable <- gsub("rel_red", "Relative Redistribution", s1$variable)
-      s1$variable <- gsub("abs_red", "Absolute Redistribution", s1$variable)
-      if (length(table(s1$variable))==1) {
-        ylabel <- paste("SWIID", s1$variable[1])
-        s1$series <- s1$country
-      } else ylabel <- ""
-      if (length(table(s1$country))==1) {
-        c.title <- s1$country[1]
-        s1$series <- s1$variable
-      } else c.title <- "Legend"
-      if (length(table(s1$variable))>1 & length(table(s1$country))>1) {
-        s1$series <- paste(s1$country, s1$variable, sep=", ")
-      }
-      if (input$theme=="light") {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) + 
-            scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title) +
-            theme_light(),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
-                       gp=gpar(fontsize=10))) 
-        )     
-      } else if (input$theme=="econ") {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) +
-            theme_economist() + scale_fill_economist(name = c.title) + scale_colour_economist(name = c.title),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
-                       gp=gpar(fontsize=10))) 
-        )     
-      } else if (input$theme=="sol") {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) +
-            theme_solarized() + scale_fill_solarized("blue", name = c.title) + 
-            scale_colour_solarized("blue", name = c.title),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
-                       gp=gpar(fontsize=10))) 
-        )     
-      } else if (input$theme=="sol2") {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) +
-            theme_solarized(light=FALSE) + scale_fill_solarized("red", name = c.title) + 
-            scale_colour_solarized("red", name = c.title),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
-                       gp=gpar(fontsize=10))) 
-        )     
-      } else if (input$theme=="stata") {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) +
-            theme_stata() + scale_fill_stata(name = c.title) + 
-            scale_colour_stata(name = c.title),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
-                       gp=gpar(fontsize=10))) 
-        )     
-      } else if (input$theme=="tufte") {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) +
-            theme_tufte() + scale_fill_grey(name = c.title) + 
-            scale_colour_grey(name = c.title),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
-                       gp=gpar(fontsize=10))) 
-        )     
-      } else {
-        print(arrangeGrob(
-          ggplot(s1, aes(x=year, y=value, colour=series)) + 
-            geom_line() +
-            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
-                            fill=series, linetype=NA), alpha = .25) +
-            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
-            labs(x = "Year", y = ylabel) + 
-            scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
-          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
-                       gp=gpar(fontsize=10, fontfamily="serif")))      
-        ) 
-      }
+        }   
+      } 
+    }    
+    s1 <- melt(s1, id.vars=c("country", "year"), na.rm=T)
+    s2 <- s1[grepl("\\_se", s1$variable), c("country", "year", "value")]
+    s1 <- s1[!grepl("\\_se", s1$variable), ]
+    s1 <- cbind(s1, s2[, 3])
+    names(s1)[5] <- "value_se"
+    s1$variable <- gsub("gini_net", "Gini Index, Net Income", s1$variable)
+    s1$variable <- gsub("gini_market", "Gini Index, Market Income", s1$variable)
+    s1$variable <- gsub("rel_red", "Relative Redistribution", s1$variable)
+    s1$variable <- gsub("abs_red", "Absolute Redistribution", s1$variable)
+    
+    # Modify ylabel and legend title to reflect selected countries and series
+    if (length(table(s1$variable))==1) {
+      ylabel <- paste("SWIID", s1$variable[1])
+      s1$series <- s1$country
+    } else ylabel <- ""
+    if (length(table(s1$country))==1) {
+      c.title <- s1$country[1]
+      s1$series <- s1$variable
+    } else c.title <- ""
+    if (length(table(s1$variable))>1 & length(table(s1$country))>1) {
+      s1$series <- paste(s1$country, s1$variable, sep=", ")
+    }
+    
+    # Basic plot
+    p <- ggplot(s1, aes(x=year, y=value, colour=series)) + 
+      geom_line() +
+      geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
+                      fill=series, linetype=NA), alpha = .25) +
+      coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
+      labs(x = "Year", y = ylabel)
+    
+    # Apply themes and add source
+    if (input$theme=="light") {
+      arrangeGrob(
+        p + theme_light() + scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
+                     gp=gpar(fontsize=10)) 
+      )      
+    } else if (input$theme=="tufte") {
+      arrangeGrob(
+        p + theme_tufte() + scale_fill_grey(name = c.title) + 
+          scale_colour_grey(name = c.title),
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
+                     gp=gpar(fontsize=10, fontfamily="serif")) 
+      )     
+    } else if (input$theme=="econ") {
+      arrangeGrob(
+        p + theme_economist() + scale_fill_economist(name = c.title) + scale_colour_economist(name = c.title),
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
+                     gp=gpar(fontsize=10))
+      )     
+    } else if (input$theme=="sol") {
+      arrangeGrob(
+        p + theme_solarized() + scale_fill_solarized("blue", name = c.title) + 
+          scale_colour_solarized("blue", name = c.title),
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
+                     gp=gpar(fontsize=10))
+      )     
+    } else if (input$theme=="stata") {
+      arrangeGrob(
+        p + theme_stata() + scale_fill_stata(name = c.title) + 
+          scale_colour_stata(name = c.title),
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
+                     gp=gpar(fontsize=10))
+      )     
+    } else {
+      arrangeGrob(
+        p + scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
+        sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
+                     gp=gpar(fontsize=10))      
+      ) 
+    }
     
   })
+  
+  output$plot <- renderPlot({     
+    print(plotInput())    
+  })
+  
+  output$downloadPlot <- downloadHandler(
+    filename = function() { paste0('SWIID', '.pdf') },
+    content = function(file) {
+      pdf(file, width = 6, height = 4)
+        print(plotInput())
+      dev.off()
+    })
   
 })

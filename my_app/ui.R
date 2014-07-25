@@ -58,7 +58,9 @@ shinyUI(fluidPage(
                                       "Solarized" = "sol",
                                       "Stata" = "stata",
                                       "Tufte" = "tufte"),
-                                      selected = "none")
+                                      selected = "none"),
+           
+           downloadButton('downloadPlot', 'Download PDF')
     ),
     
     column(8,
