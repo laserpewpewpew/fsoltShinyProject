@@ -164,7 +164,20 @@ shinyServer(function(input, output, session) {
           sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.05, vjust=-1, 
                        gp=gpar(fontsize=10))) 
         )     
-      }  else {
+      } else if (input$theme=="tufte") {
+        print(arrangeGrob(
+          ggplot(s1, aes(x=year, y=value, colour=series)) + 
+            geom_line() +
+            geom_ribbon(aes(ymin = value-1.96*value_se, ymax = value+1.96*value_se, 
+                            fill=series, linetype=NA), alpha = .25) +
+            coord_cartesian(xlim=c(input$dates[1],input$dates[2])) +
+            labs(x = "Year", y = ylabel) +
+            theme_tufte() + scale_fill_grey(name = c.title) + 
+            scale_colour_grey(name = c.title),
+          sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
+                       gp=gpar(fontsize=10))) 
+        )     
+      } else {
         print(arrangeGrob(
           ggplot(s1, aes(x=year, y=value, colour=series)) + 
             geom_line() +
@@ -174,7 +187,7 @@ shinyServer(function(input, output, session) {
             labs(x = "Year", y = ylabel) + 
             scale_fill_discrete(name = c.title) + scale_colour_discrete(name = c.title),
           sub=textGrob("Source: Standardized World Income Inequality Database v5.0", x=0, hjust=-0.1, vjust=0.1, 
-                       gp=gpar(fontsize=10)))      
+                       gp=gpar(fontsize=10, fontfamily="serif")))      
         ) 
       }
     
