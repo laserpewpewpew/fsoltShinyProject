@@ -16,6 +16,10 @@ cc <- ddply(swiid, .(country), summarize, ch = ifelse(sum(!is.na(rel_red))>0, "c
 
 shinyServer(function(input, output, session) { 
   
+#   updateSliderInput(session, "years", label="Select Years:",
+#                             min = min(swiid$year, na.rm=T), max = max(swiid$year, na.rm=T), 
+#                             value = c(1975, max(swiid$year, na.rm=T)), format = "####")
+  
   observe({
     updateSelectInput(session, "country1", choices = c("select a country", cc$country), selected = "select a country")
   })
