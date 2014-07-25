@@ -1,6 +1,10 @@
 library(shiny)
 library(ggplot2)
 library(reshape2)
+library(plyr)
+library(gridExtra)
+library(ggthemes)
+
 swiid <- read.csv("SWIIDv5_0summary.csv", as.is=T)
 ch4 <- list("Net Inequality" = "gini_net",
             "Market Inequality" = "gini_market",

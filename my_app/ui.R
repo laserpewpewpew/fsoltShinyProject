@@ -45,8 +45,8 @@ shinyUI(fluidPage(
                   ),
                   br(),
                   sliderInput("dates", label="Select Years:",
-                              min = min(swiid$year, na.rm=T), max = max(swiid$year, na.rm=T), 
-                              value = c(1975, max(swiid$year, na.rm=T)), format = "####"),
+                              min = 1960, max = 2013, 
+                              value = c(1975, 2013), format = "####"),
                 
                   checkboxInput("bw", "Black and White Background", FALSE)
                   ),
