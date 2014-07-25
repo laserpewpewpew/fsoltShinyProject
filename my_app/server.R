@@ -14,7 +14,7 @@ ch2 <- list("Net Inequality" = "gini_net",
             "Market Inequality" = "gini_market")
 cc <- ddply(swiid, .(country), summarize, ch = ifelse(sum(!is.na(rel_red))>0, "ch4", "ch2" ))
 
-shinyServer(function(input, output, session) {
+shinyServer(function(input, output, session) { 
   
   observe({
     updateSelectInput(session, "country1", choices = c("select a country", cc$country), selected = "select a country")
